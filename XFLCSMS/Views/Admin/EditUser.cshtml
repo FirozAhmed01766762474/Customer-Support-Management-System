@@ -1,0 +1,156 @@
+﻿@model XFLCSMS.Models.Admin.UserView;
+
+
+
+<section class="content">
+    <form asp-controller="Admin" asp-action="UpdateUser" method="post">
+        <div class="container-fluid">
+@*             <br />
+            <div class="row card card-primary text-center">
+                <h4>Edit User</h4>
+            </div> *@
+            <br />
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-6">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                                
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">UserId</label>
+                                    <input type="text" asp-for= "@Model.Id"  value="@Model.Id" class="form-control" id="exampleInputEmail1" placeholder="UserId" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Full Name</label>
+                                    <input type="text" asp-for="@Model.FullName" value="@Model.FullName" class="form-control" id="exampleInputEmail1" placeholder="Full Name" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">User Name</label>
+                                    <input type="text" asp-for="@Model.UserName" class="form-control" value="@Model.UserName" id="exampleInputEmail1" placeholder="User Name" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Email</label>
+                                    <input type="text" asp-for="@Model.Email" value="@Model.Email" class="form-control" id="exampleInputEmail1" placeholder="Emai" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Phon Number</label>
+                                    <input type="text" asp-for="@Model.PhonNumber" value="@Model.PhonNumber" class="form-control" id="exampleInputEmail1" placeholder="Phon Number" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Designation</label>
+                                    @* <input type="text" asp-for="@Model.Designation" value="@Model.Designation" class="form-control" id="exampleInputEmail1" placeholder="Designation" readonly> *@
+                                <select type="text" asp-for="@Model.Department" class="form-control" id="UCatagory" name="Department">
+                                    <option value="Maker">Maker</option>
+                                    <option value="Support Maneger">Support Maneger</option>
+                                    <option value="Support Engineer">Support Engineer</option>
+
+                                    <!-- Add more options as needed -->
+                                </select>
+                                </div>
+
+                            </div>
+                            <!-- /.card-body -->
+                                
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <div class="col-md-6">
+                    <!-- Form Element sizes -->
+                    <div class="card card-primary">
+
+                                
+
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Employee Id</label>
+                                    <input type="text" asp-for="@Model.EmployeeId" value="@Model.EmployeeId" class="form-control" id="exampleInputEmail1" placeholder="Employee Id" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Brocarage House Name</label>
+                                    <input type="text" asp-for="@Model.BrokerageHouseName" value="@Model.BrokerageHouseName" class="form-control" id="exampleInputEmail1" placeholder="Brocarage House Name" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Branch</label>
+                                    <input type="text" asp-for="@Model.Branch" value="@Model.Branch" class="form-control" id="exampleInputEmail1" placeholder="Branch" readonly>
+                                </div>
+
+                                     
+
+                                <div class="form-group">
+                                    <label for="UCatagory">User Category</label>
+                                    <select asp-for="@Model.UCatagory" class="form-control" id="UCatagory" name="UCatagory">
+                                        <option value="False">Normal User</option>
+                                        <option value="True">Admin</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="UType">User Type</label>
+                                    <select asp-for="@Model.UType" class="form-control" id="UType" name="UType">
+                                        <option value="False">Outside User</option>
+                                        <option value="True">XFL User</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="UStatus">User Status</label>
+                                    <select asp-for="@Model.UStatus" class="form-control" id="UStatus" name="UStatus">
+                                        <option value="True">Enable</option>
+                                        <option value= "False">Disable</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+
+
+
+                            </div>
+                            <!-- /.card-body -->
+                                
+
+                        <!-- /.card-body -->
+                    </div>
+                        <div class="form-group float-right">
+                            <input type="submit" value="Update User" class="btn btn-primary" />
+                        </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+            <!-- /.card-body -->
+
+        </div>
+
+
+    </form>
+        <!-- /.container-fluid -->
+</section>
+    <!-- /.content -->
+
+
+<script type="text/javascript">
+    // Define a function named preventback
+    function preventback() {
+        // Forward the browser's history by one step, effectively preventing the user from going back
+        window.history.forward();
+    }
+
+    // Set a timeout to call the preventback function immediately after the script is executed
+    setTimeout("preventback()", 0);
+
+    // When the window loads, assign a null function to the onload event to effectively do nothing
+    window.onload = function () { null };
+</script>
