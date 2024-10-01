@@ -89,44 +89,6 @@
                 <span class="brand-text font-weight-light">XFL CSMS</span>
             </a>
 
-@*             <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Sidebar user -->
-                <nav class="navbar navbar-expand-lg">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    @ViewBag.Profile.FullName
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="profileDropdown">
-                                    <a class="dropdown-item" asp-action="Profile" asp-route-id="@ViewBag.Profile.Id">My Profile</a>
-                                    <a class="dropdown-item" asp-action="">Change Password</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" asp-action="Logout" asp-controller="Admin">Log Out</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-
-                <!-- SidebarSearch Form -->
-                <div class="form-inline">
-                    <div class="input-group" data-widget="sidebar-search">
-                        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-sidebar">
-                                <i class="fas fa-search fa-fw"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            </div> *@
-            <!-- Sidebar -->
             <div class="sidebar">
 
 
@@ -239,6 +201,63 @@
                                         <p>Affected Section List</p>
                                     </a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="toggleSubMenu">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>View To-Do List</p>
+                                    </a>
+                                    <ul class="ml-5 nav nav-treeview custom-treeview" id="subMenu" style="display: none;">
+                                        <!-- Initially hidden -->
+                                        <li class="nav-item">
+                                            <a asp-action="ViewTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>To-Do List</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="AllTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>All To-Do</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="CompletedTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Complete Task</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="TodoReports" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>To-Do Report</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="toggleSubMenu">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> All To-Do List</p>
+                                    </a>
+                                    <ul class="ml-5 nav nav-treeview custom-treeview" id="subMenu" style="display: none;">
+                                        <!-- Initially hidden -->
+                                        <li class="nav-item">
+                                            <a asp-action="ViewAllTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p> All To-Do List</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a asp-action="AllTodoReports" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p> All To-Do Report</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+
 
                             </ul>
                         </li>

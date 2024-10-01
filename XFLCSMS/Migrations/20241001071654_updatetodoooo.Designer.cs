@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using XFLCSMS.Data;
 
@@ -11,9 +12,10 @@ using XFLCSMS.Data;
 namespace XFLCSMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241001071654_updatetodoooo")]
+    partial class updatetodoooo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -471,7 +473,7 @@ namespace XFLCSMS.Migrations
             modelBuilder.Entity("XFLCSMS.Models.Todos.Todo", b =>
                 {
                     b.HasOne("XFLCSMS.Models.Register.User", "User")
-                        .WithMany("Todos")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -503,8 +505,6 @@ namespace XFLCSMS.Migrations
 
             modelBuilder.Entity("XFLCSMS.Models.Register.User", b =>
                 {
-                    b.Navigation("Todos");
-
                     b.Navigation("issue");
                 });
 

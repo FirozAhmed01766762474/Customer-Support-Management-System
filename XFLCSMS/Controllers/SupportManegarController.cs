@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using XFLCSMS.Models.Admin;
 using XFLCSMS.Models.Common;
 using XFLCSMS.Models.Issue;
 using XFLCSMS.Models.Register;
+using XFLCSMS.Models.Todos;
 
 namespace XFLCSMS.Controllers
 {
@@ -667,6 +669,452 @@ namespace XFLCSMS.Controllers
                 return RedirectToAction("Login", "RegisterLogin");
             }
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ViewTodo(int page, int rowperpage, string? searchString = null, string? sortField = null, bool sortAscending = true)
+        {
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+                if (page <= 0) { page = 1; }
+
+                ViewBag.CurrentSortField = sortField;
+                ViewBag.CurrentSortAscending = sortAscending;
+                // Fetch all Todo items from the database
+                //var todos = await _context.Todos.Where(item => item.UserId == LogSesson.Id && item.Status == "In progress").ToListAsync();
+                var todos = await _context.Todos
+                            .Where(item => item.UserId == LogSesson.Id && item.Status == "In progress")
+                            .OrderByDescending(item => item.Id)
+                            .ToListAsync();
+                //List<Todo> todoss = todos;
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    todos = todos.Where(todo =>
+                                            todo.Todoname.ToLower().Contains(searchString.ToLower()) ||
+                                            todo.Status?.ToLower().Contains(searchString.ToLower()) == true ||
+                                            todo.CreatedOn.ToString().ToLower().Contains(searchString.ToLower())
+                                     ).ToList();
+                }
+
+                switch (sortField)
+                {
+                    case "Task":
+                        todos = sortAscending ? todos.OrderBy(item => item.Todoname).ToList() :
+                            todos.OrderByDescending(item => item.Todoname).ToList();
+                        break;
+                    case "Status":
+                        todos = sortAscending ? todos.OrderBy(item => item.Status).ToList() :
+                            todos.OrderByDescending(item => item.Status).ToList();
+                        break;
+                    case "CreatedOn":
+                        todos = sortAscending ? todos.OrderBy(item => item.CreatedOn).ToList() :
+                            todos.OrderByDescending(item => item.CreatedOn).ToList();
+                        break;
+                    default:
+                        // Default sorting if no valid sort field provided (sort by Id by default)
+                        todos = todos.OrderByDescending(item => item.Id).ToList();
+                        break;
+                }
+
+
+                int tot_records = todos.Count;
+                int pagesize = rowperpage > 0 ? rowperpage : 10;
+                int number_of_button = 4;
+
+                Pager P = new Pager(tot_records, page, pagesize, number_of_button, searchString);
+                ViewBag.pager = P;
+                int skip_records = (page - 1) * pagesize;
+                int take_records = pagesize;
+                List<Todo> todoss = todos.Skip(skip_records).Take(take_records).OrderByDescending(item => item.Id).ToList();
+
+
+
+                TodoviewModel todoviewModel = new TodoviewModel()
+                {
+                    Todos = todoss,
+                    Todo = null,
+
+                };
+
+                // Return the view with the list of Todo items
+                return View(todoviewModel);
+
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AllTodo(int page, int rowperpage, string? searchString = null, string? sortField = null, bool sortAscending = true)
+        {
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+                if (page <= 0) { page = 1; }
+
+                ViewBag.CurrentSortField = sortField;
+                ViewBag.CurrentSortAscending = sortAscending;
+                // Fetch all Todo items from the database
+                var todos = await _context.Todos.Where(item => item.UserId == LogSesson.Id).ToListAsync();
+                //List<Todo> todoss = todos;
+
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    todos = todos.Where(todo =>
+                                            todo.Todoname.ToLower().Contains(searchString.ToLower()) ||
+                                            todo.Status?.ToLower().Contains(searchString.ToLower()) == true ||
+                                            todo.CreatedOn.ToString().ToLower().Contains(searchString.ToLower())
+                                     ).ToList();
+                }
+
+                switch (sortField)
+                {
+                    case "Task":
+                        todos = sortAscending ? todos.OrderBy(item => item.Todoname).ToList() :
+                            todos.OrderByDescending(item => item.Todoname).ToList();
+                        break;
+                    case "Status":
+                        todos = sortAscending ? todos.OrderBy(item => item.Status).ToList() :
+                            todos.OrderByDescending(item => item.Status).ToList();
+                        break;
+                    case "CreatedOn":
+                        todos = sortAscending ? todos.OrderBy(item => item.CreatedOn).ToList() :
+                            todos.OrderByDescending(item => item.CreatedOn).ToList();
+                        break;
+                    default:
+                        // Default sorting if no valid sort field provided (sort by Id by default)
+                        todos = todos.OrderByDescending(item => item.Id).ToList();
+                        break;
+                }
+
+
+                int tot_records = todos.Count;
+                int pagesize = rowperpage > 0 ? rowperpage : 10;
+                int number_of_button = 4;
+
+                Pager P = new Pager(tot_records, page, pagesize, number_of_button, searchString);
+                ViewBag.pager = P;
+                int skip_records = (page - 1) * pagesize;
+                int take_records = pagesize;
+                List<Todo> todoss = todos.Skip(skip_records).Take(take_records).ToList();
+
+
+
+                TodoviewModel todoviewModel = new TodoviewModel()
+                {
+                    Todos = todoss,
+                    Todo = null,
+
+                };
+
+                // Return the view with the list of Todo items
+                return View(todoviewModel);
+
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CompletedTodo(int page, int rowperpage, string? searchString = null, string? sortField = null, bool sortAscending = true)
+        {
+
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+                if (page <= 0) { page = 1; }
+
+                ViewBag.CurrentSortField = sortField;
+                ViewBag.CurrentSortAscending = sortAscending;
+                // Fetch all Todo items from the database
+                var todos = await _context.Todos.Where(item => item.UserId == LogSesson.Id && item.Status == "Done").ToListAsync();
+                //List<Todo> todoss = todos;
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    todos = todos.Where(todo =>
+                                            todo.Todoname.ToLower().Contains(searchString.ToLower()) ||
+                                            todo.Status?.ToLower().Contains(searchString.ToLower()) == true ||
+                                            todo.CreatedOn.ToString().ToLower().Contains(searchString.ToLower())
+                                     ).ToList();
+                }
+
+                switch (sortField)
+                {
+                    case "Task":
+                        todos = sortAscending ? todos.OrderBy(item => item.Todoname).ToList() :
+                            todos.OrderByDescending(item => item.Todoname).ToList();
+                        break;
+                    case "Status":
+                        todos = sortAscending ? todos.OrderBy(item => item.Status).ToList() :
+                            todos.OrderByDescending(item => item.Status).ToList();
+                        break;
+                    case "CreatedOn":
+                        todos = sortAscending ? todos.OrderBy(item => item.CreatedOn).ToList() :
+                            todos.OrderByDescending(item => item.CreatedOn).ToList();
+                        break;
+                    default:
+                        // Default sorting if no valid sort field provided (sort by Id by default)
+                        todos = todos.OrderByDescending(item => item.Id).ToList();
+                        break;
+                }
+
+
+                int tot_records = todos.Count;
+                int pagesize = rowperpage > 0 ? rowperpage : 10;
+                int number_of_button = 4;
+
+                Pager P = new Pager(tot_records, page, pagesize, number_of_button, searchString);
+                ViewBag.pager = P;
+                int skip_records = (page - 1) * pagesize;
+                int take_records = pagesize;
+                List<Todo> todoss = todos.Skip(skip_records).Take(take_records).ToList();
+
+
+
+                TodoviewModel todoviewModel = new TodoviewModel()
+                {
+                    Todos = todoss,
+                    Todo = null,
+
+                };
+
+                // Return the view with the list of Todo items
+                return View(todoviewModel);
+
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddTodo(TodoviewModel newTodo)
+        {
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+                Todo todo = new Todo()
+                {
+                    CreatedOn = DateTime.Now,
+                    Todoname = newTodo.Todo.Todoname,
+                    Status = "In progress",
+                    UserId = newTodo.Todo.UserId,
+                    BrokerageId = LogSesson.BrokerageHouseName,
+                };
+
+                await _context.Todos.AddAsync(todo);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("ViewTodo");
+
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTodo(int id)
+        {
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+                var todo = await _context.Todos.FindAsync(id);
+                if (todo == null)
+                {
+                    return NotFound();
+                }
+                var statusOptions = new List<SelectListItem>
+                {
+                    new SelectListItem("In progress", "In progress"),
+                    new SelectListItem("Done", "Done"),
+                    new SelectListItem("Canceled", "Canceled")
+                };
+
+                ViewBag.StatusOptions = statusOptions;
+
+                return View(todo);
+
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Updatetodo(Todo model)
+        {
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+
+                var existingTodo = await _context.Todos.FindAsync(model.Id);
+                if (existingTodo == null)
+                {
+                    return NotFound();
+                }
+
+                existingTodo.Todoname = model.Todoname;
+                existingTodo.Status = model.Status;
+
+                _context.Todos.Update(existingTodo);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("ViewTodo");
+
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+
+
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> TodoReports()
+        {
+            try
+            {
+
+
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+
+                var reportView = new TodoReportView
+                {
+                    Todos = null,
+                    ListofEmployee = null,
+                    search = null,
+                    TodoHederInfo = null,
+                    brokerages = null,
+
+                };
+
+
+                return View(reportView);
+            }
+            catch
+            {
+
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TodoSearch(TodoReportView reportView)
+        {
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                if (reportView.search != null)
+                {
+                    // Check if FromDate is not null and is greater than or equal to the current date
+                    if (reportView.search.FromDate.HasValue && reportView.search.FromDate >= DateTime.Now)
+                    {
+                        reportView.search.FromDate = DateTime.Now;
+                    }
+
+                    // Check if ToDate is not null and is greater than or equal to the current date
+                    if (reportView.search.ToDate.HasValue && reportView.search.ToDate >= DateTime.Now)
+                    {
+                        reportView.search.ToDate = DateTime.Now;
+                    }
+                }
+
+                var searchResults = _context.Todos
+                    .Where(item => item.UserId == LogSesson.Id)
+                    .OrderByDescending(item => item.Id)
+                    .ToList();
+
+
+                if (!String.IsNullOrEmpty(reportView.search.Status))
+                    searchResults = searchResults.Where(x => x.Status.Contains(reportView.search.Status)).ToList();
+
+                if ((reportView.search.FromDate != null) && (reportView.search.ToDate != null))
+                    searchResults = searchResults.Where(x => (x.CreatedOn >= reportView.search.FromDate) && (x.CreatedOn <= reportView.search.ToDate)).ToList();
+
+                string Brocaragename = GetBrocarageHouseName(LogSesson.BrokerageHouseName);
+                string EmployeeNamee = LogSesson.FullName;
+
+
+
+                int TotalTodo = searchResults.Count();
+                int TotalInprogressTodo = searchResults.Where(x => x.Status == "In progress").Count();
+                int TotalCompletedTodoo = searchResults.Where(x => x.Status == "Completed").Count();
+                int TotalCancledTodo = TotalTodo - TotalInprogressTodo - TotalCompletedTodoo;
+
+
+                TodoHederInfo SectionInfo = new TodoHederInfo
+                {
+                    BrokerageHouseName = Brocaragename,
+                    EmployeeName = EmployeeNamee,
+                    TotalTodo = TotalTodo,
+                    TotalInprogress = TotalInprogressTodo,
+                    TotalCanseled = TotalCancledTodo,
+                    TotalCompleteTodo = TotalCompletedTodoo,
+                    ReportName = "Support Maneger"
+
+
+                };
+
+                // Populate the Issues property of the ReportView model with search results
+                var reportViewWithSearchResults = new TodoReportView
+                {
+                    Todos = searchResults,
+                    TodoHederInfo = SectionInfo,
+
+                };
+
+                // Return the partial view with the populated reportView model
+                return PartialView("_todoSearchResult", reportViewWithSearchResults);
+
+            }
+            catch
+            {
+
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+
+
+        }
+
 
 
         [HttpPost]

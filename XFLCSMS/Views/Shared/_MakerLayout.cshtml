@@ -21,6 +21,52 @@
         .error {
             color: red;
         }
+
+        .custom-treeview {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+            /* Vertical line for the parent items */
+            .custom-treeview::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 50%; /* Adjust if the vertical line cuts off too soon */
+                left: 15px; /* Adjusted position to align with icon/text */
+                width: 1px;
+                background: #ccc; /* Color of the vertical line */
+            }
+
+            /* Child items - sublists */
+            .custom-treeview .nav-item {
+                position: relative;
+                padding-left: 25px; /* Adjust spacing from the vertical line */
+            }
+
+                /* Vertical line continuation for child items */
+                .custom-treeview .nav-item::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 15px; /* Align with the parent line */
+                    height: 100%;
+                    width: 1px;
+                    background: #ccc; /* Color of the vertical line */
+                }
+
+                /* Horizontal connector line to submenu items */
+                .custom-treeview .nav-item a::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%; /* Adjust if the horizontal line isn't aligned properly */
+                    left: -10px; /* Adjust horizontal position */
+                    width: 10px;
+                    height: 1px;
+                    background: #ccc; /* Color of the horizontal line */
+                }
     </style>
 </head>
 <body class="hold-transition sidebar-mini" oncontextmenu="">
@@ -53,7 +99,6 @@
         </nav>
         <!-- /.navbar -->
 
-        <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a asp-action="Dashbord" class="brand-link">
@@ -83,7 +128,7 @@
                         </ul>
                     </div>
                 </nav>
-                
+
                 <!-- SidebarSearch Form -->
                 <div class="form-inline">
                     <div class="input-group" data-widget="sidebar-search">
@@ -98,10 +143,11 @@
 
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="true">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                         <li class="nav-item menu-open">
-                            <a href="#" class="nav-link active">
+                            <!-- This is the parent item that is open by default -->
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-book"></i>
                                 <p>
                                     Pages
@@ -115,12 +161,7 @@
                                         <p>Dashbord</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a asp-action="Pagination" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Pagination</p>
-                                    </a>
-                                </li>
+
                                 <li class="nav-item">
                                     <a asp-action="IssueRaiseFrom" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
@@ -137,7 +178,6 @@
                                     <a asp-action="UnassignedTicketList" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Unassigned Ticket List</p>
-
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -145,6 +185,39 @@
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Closed Ticket List</p>
                                     </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="toggleSubMenu">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>View To-Do List</p>
+                                    </a>
+                                    <ul class="ml-5 nav nav-treeview custom-treeview" id="subMenu" style="display: none;">
+                                        <!-- Initially hidden -->
+                                        <li class="nav-item">
+                                            <a asp-action="ViewTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>To-Do List</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="AllTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>All To-Do</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="CompletedTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Complete Task</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="TodoReports" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>To-Do Report</p>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
                         </li>
@@ -154,6 +227,7 @@
             </div>
             <!-- /.sidebar -->
         </aside>
+
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -188,7 +262,7 @@
     <script src="~/dist/js/adminlte.js"></script>
     <!-- Include CKEditor library -->
     <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-    
+
 
     <!-- Custom Scripts -->
     <script>
@@ -233,6 +307,14 @@
                 return false;
             }
         }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#toggleSubMenu').click(function (e) {
+                e.preventDefault(); // Prevent the default action of the link
+                $('#subMenu').slideToggle(); // Toggle the visibility of the submenu
+            });
+        });
     </script>
 </body>
 </html>

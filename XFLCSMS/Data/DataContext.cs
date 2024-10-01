@@ -8,6 +8,7 @@ using XFLCSMS.Models.Register;
 using XFLCSMS.Models.Support;
 using XFLCSMS.Models.Login;
 using XFLCSMS.Models.DataTable;
+using XFLCSMS.Models.Todos;
 
 namespace XFLCSMS.Data
 {
@@ -37,9 +38,8 @@ namespace XFLCSMS.Data
         public DbSet<IssueTable> Issues { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
-        //public DbSet<XFLCSMS.Models.Register.UserRegisterRequest>? UserRegisterRequest { get; set; }
-        //public DbSet<XFLCSMS.Models.Register.Verify>? Verify { get; set; }
-        //public DbSet<XFLCSMS.Models.Login.UserLoginRequest>? UserLoginRequest { get; set; }
+        public DbSet<Todo> Todos { get; set; }
+
 
     }
 }

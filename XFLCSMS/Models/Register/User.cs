@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using XFLCSMS.Models.Issue;
+using XFLCSMS.Models.Todos;
 
 namespace XFLCSMS.Models.Register
 {
@@ -33,5 +34,6 @@ namespace XFLCSMS.Models.Register
         public bool Terms { get; set; }
 
         public ICollection<IssueTable> issue { get; set; }
+        public ICollection<Todo> Todos { get; set; } = new List<Todo>();
     }
 }

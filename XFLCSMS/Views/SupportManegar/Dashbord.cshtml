@@ -100,10 +100,10 @@
                                     @ViewBag.Profile.FullName
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="profileDropdown">
-                                    <a class="dropdown-item" asp-action="Profile" asp-route-id="@ViewBag.Profile.Id">My Profile</a>
-                                    <a class="dropdown-item" asp-action="ChangePassword">Change Password</a>
+                                    <a class="dropdown-item" asp-controller="SupportManegar" asp-action="Profile" asp-route-id="@ViewBag.Profile.Id">My Profile</a>
+                                    <a class="dropdown-item" asp-controller="SupportManegar" asp-action="ChangePassword">Change Password</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" asp-action="Logout" asp-controller="Maneger">Log Out</a>
+                                    <a class="dropdown-item" asp-action="Logout" asp-controller="SupportManegar">Log Out</a>
                                 </div>
                             </li>
                         </ul>
@@ -163,6 +163,39 @@
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Closed Ticket List</p>
                                     </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="toggleSubMenu">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>View To-Do List</p>
+                                    </a>
+                                    <ul class="ml-5 nav nav-treeview custom-treeview" id="subMenu" style="display: none;">
+                                        <!-- Initially hidden -->
+                                        <li class="nav-item">
+                                            <a asp-action="ViewTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>To-Do List</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="AllTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>All To-Do</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="CompletedTodo" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Complete Task</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="TodoReports" class="nav-link small">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>To-Do Report</p>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
 
 
@@ -389,53 +422,7 @@
                                 <!-- /.card-header -->
                                 <div class="card-body">
 
-                                    @*                                     <canvas id="brokerageChart"></canvas> *@
-                                    @*                                     <script>
-                                    Sample data (replace with your actual data)
 
-                                    const brokerageData = {
-                                    labels: ['Apex Investments Ltd.', 'Bank Asia Securities Ltd.', 'EBL Securities Ltd.', 'Green Delta Securities Ltd.',
-                                    'Islami Bank Securities Ltd.', 'Monarch Holdings Ltd.', 'NLI Securities Ltd.', 'One Securities Ltd.',
-                                    'Shahjalal Islami Bank Securities Ltd.', 'UCB Stock Brokerage Ltd.', 'Xpert Fintech Limited'],
-
-                                    datasets: [{
-                                    label: 'Total Tickets',
-                                    data: [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550],
-                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    borderWidth: 1
-                                    }, {
-                                    label: 'In Queue',
-                                    data: [20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220],
-                                    backgroundColor: 'rgba(255, 206, 86, 0.2)', // Yeollow Color
-                                    borderColor: 'rgba(255, 206, 86, 1)',
-                                    borderWidth: 1
-                                    }, {
-                                    label: 'Closed Tickets',
-                                    data: [30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330],
-                                    backgroundColor: 'rgba(0, 255, 0, 0.2)', // Green color
-                                    borderColor: 'rgba(0, 255, 0, 1)',
-                                    borderWidth: 1
-                                    }]
-                                    };
-                                    // const brokerageData= @Model.ChartData
-                                    const chartOptions = {
-                                    scales: {
-                                    y: {
-                                    beginAtZero: true
-                                    }
-                                    }
-                                    };
-
-                                    // Create the charts
-                                    const brokerageChartCtx = document.getElementById('brokerageChart').getContext('2d');
-                                    new Chart(brokerageChartCtx, {
-                                    type: 'bar',
-                                    data: brokerageData,
-                                    options: chartOptions
-                                    });
-
-                                    </script>   *@
                                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                                     <canvas id="myChart" width="400" height="200"></canvas>
