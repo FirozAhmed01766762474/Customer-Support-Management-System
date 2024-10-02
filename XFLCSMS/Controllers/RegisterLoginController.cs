@@ -65,6 +65,14 @@ namespace XFLCSMS.Controllers
             if (!ModelState.IsValid)
             {
                 registerView.Brokerages = _context.Brokerages.ToList();
+                registerView.userRegisterRequest = registerView.userRegisterRequest;
+                registerView.Acronyme = _context.Brokerages
+                                                            .Where(b => b.BrokerageId == registerView.userRegisterRequest.BrokerageHouseName) // Filter by the given BrokerageId
+                                                            .Select(b => b.BrokerageHouseAcronym) // Select the BrokerageHouseAcronym field
+                                                            .FirstOrDefault(); // Get the first match or default if no match
+                registerView.Branchhs = _context.Branchhs
+                                                        .Where(b => b.BrokerageId == registerView.userRegisterRequest.BrokerageHouseName) // Filter by the given BrokerageId
+                                                        .ToList(); // Convert the result to a list
                 return View(registerView);
             }
             var request = registerView.userRegisterRequest;
@@ -108,12 +116,11 @@ namespace XFLCSMS.Controllers
                 {
                     To = request.Email,
                     Subject = "Registration Token for XFL Support System Software",
-                    Body = "Dear Concern,\r\n\r\nThank you for choosing our Support System " +
-                    "Software.\r\n\r\nTo complete your registration process, please use the following registration token:\r\n" +
-                    "Registration Token:" + user.VerificationToken + "\r\n\r\n" +
+                    Body = "Dear Concern,\r\n\r\nThank you for registering in XFLCSMS " +
+                    "Your Registration Token:" + user.VerificationToken + "\r\n\r\n" +
                     "Please use this token to complete your registration process. If you did not request this token, " +
                     "please ignore this email.\r\n\r\n" +
-                    "If you encounter any issues or need assistance, feel free to contact our support team at " +
+                    "If you encounter any issues or need assistance, feel free to contact us at " +
                     "info@xpertfintech.com.\r\n\r\nThank you,\r\nXpert Fintech Limited"
                 };
                 _emailServices.SendEmail(Mail);

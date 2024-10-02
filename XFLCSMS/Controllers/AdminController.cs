@@ -2344,7 +2344,7 @@ namespace XFLCSMS.Controllers
         [HttpGet]
         public async Task<IActionResult> AllTodoSearch(TodoReportView reportView)
         {
-
+            try { 
             var jsonStringFromSession = HttpContext.Session.GetString("AdminData");
             User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
 
@@ -2379,7 +2379,7 @@ namespace XFLCSMS.Controllers
 
 
 
-            string Brocaragename = reportView.search.BrocarageHouseName !=0 ?GetBrocarageHouseName(reportView.search.BrocarageHouseName) :"All";
+            string Brocaragename = reportView.search.BrocarageHouseName !=null ?GetBrocarageHouseName(reportView.search.BrocarageHouseName) :"All";
             string EmployeeNamee = (reportView.search.EmployeeName != null) ? GetEmployeeName(reportView.search.EmployeeName) : "All";
 
 
@@ -2414,6 +2414,12 @@ namespace XFLCSMS.Controllers
 
             // Return the partial view with the populated reportView model
             return PartialView("_todoSearchResult", reportViewWithSearchResults);
+            }
+            catch
+            {
+                HttpContext.Session.Remove("AdminData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
         }
 
 
