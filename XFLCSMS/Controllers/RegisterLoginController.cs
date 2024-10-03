@@ -5,6 +5,7 @@ using XFLCSMS.Models.Login;
 using XFLCSMS.Models.Register;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System;
 
 namespace XFLCSMS.Controllers
 {
@@ -116,13 +117,14 @@ namespace XFLCSMS.Controllers
                 {
                     To = request.Email,
                     Subject = "Registration Token for XFL Support System Software",
-                    Body = "Dear Concern,\r\n\r\nThank you for registering in XFLCSMS " +
-                    "Your Registration Token:" + user.VerificationToken + "\r\n\r\n" +
+                    Body = "Dear Concern,\n" +
+                    "Thank you for registering in XFLCSMS\n\n " +
+                    "Your Registration Token is:" + user.VerificationToken + "\r\n\r\n" +
                     "Please use this token to complete your registration process. If you did not request this token, " +
                     "please ignore this email.\r\n\r\n" +
                     "If you encounter any issues or need assistance, feel free to contact us at " +
                     "info@xpertfintech.com.\r\n\r\nThank you,\r\nXpert Fintech Limited"
-                };
+            };
                 _emailServices.SendEmail(Mail);
             }
 

@@ -1,0 +1,9 @@
+Requirements:
+Visual Studio 2022
+SQL Server 19
+
+Step 1: Run XFLCSMS.sln
+Step 2: Go to Data/DataContext
+Step 3: Change the SQL Server name and configure the Database to link with the application 
+Step 4: Go to tools and Nuget Package Manager/Package Manager Console: insert the command add-migrations (migration name), update-database
+
