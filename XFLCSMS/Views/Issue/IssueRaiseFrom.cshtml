@@ -363,9 +363,9 @@
                                             <label for="exampleInputEmail1">Ticket Issue's Time and Date</label>
                                             <input asp-for= "@Model.issueFrom.dateTime" type="text" class="form-control" id="dateTimeInput" readonly>
                                         </div>
-                                        <div class="form-group">
+@*                                         <div class="form-group">
                                             <input type="submit" value="Upload" class="btn btn-primary"/>
-                                        </div> 
+                                        </div>  *@
                                   
                                     </div>
                                     <!-- /.card-body -->
@@ -392,8 +392,7 @@
                                                 {
                                                     <option value="@item.SupportTypeId"  >@item.SType</option>
                                                 }
-@*                                                  <option value= 2>Bhugi</option>
-                                                <option value= 1>Chugi</option> *@ 
+
                                             </select>
                                         </div>
 
@@ -406,8 +405,7 @@
                                                     <option value="@item.SupportCatagoryId">@item.SCatagory</option>
                                                 }
 
-                                                @*  <option value="Maker">Bhugi</option>
-                                                <option value="Checker">Chugi</option>  *@
+
                                             </select>
                                         </div>
 
@@ -420,8 +418,6 @@
                                                     <option value="@item.SupportSubCatagoryId">@item.SubCatagory</option>
                                                 }
 
-                                                @*  <option value="Maker">Bhugi</option>
-                                                <option value="Checker">Chugi</option>  *@
                                             </select>
                                         </div>
 
@@ -434,8 +430,7 @@
                                                     <option value="@item.AffectedSectionId">@item.ASection</option>
                                                 }
 
-                                                 @* <option value="Maker">Bhugi</option>
-                                                <option value="Checker">Chugi</option>  *@
+                          
                                             </select>
                                         </div>
 
@@ -451,9 +446,9 @@
 
                                     </div>
                                     
-                                     <div class="mb-3">
+                             @*         <div class="mb-3">
                                         <button type="submit" class="btn btn-outline-primary btn-block">Register</button>
-                                    </div>
+                                    </div> *@
                                     <!-- /.card-body -->
                                 </form>
 

@@ -19,13 +19,13 @@ namespace XFLCSMS.Data
 
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder
-                .UseSqlServer("Server=DESKTOP-21UHJJD\\SQLEXPRESS;Database=CSMS;Trusted_Connection=true;");
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //    optionsBuilder
+        //        .UseSqlServer("Server=DESKTOP-RECEPTI;Database=CSMS;Trusted_Connection=true;");
 
-        }
+        //}
 
         public DbSet<User> Users => Set<User>();
         public DbSet<Branchh> Branchhs {  get; set; }

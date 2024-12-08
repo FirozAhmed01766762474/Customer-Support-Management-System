@@ -56,11 +56,11 @@
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
                 </li>
-                <li class="nav-item">
+@*                 <li class="nav-item">
                     <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
                         <i class="fas fa-th-large"></i>
                     </a>
-                </li>
+                </li> *@
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -135,7 +135,7 @@
                                 </li>
 
                                 <li class="nav-item">
-                                    <a asp-action="AllTicketList" class="nav-link ">
+                                    <a asp-action="AllTicketList" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>All Ticket List</p>
                                     </a>
@@ -152,9 +152,8 @@
                                         <p>Closed Ticket List</p>
                                     </a>
                                 </li>
-
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" id="toggleSubMenu">
+                                    <a class="nav-link" asp-action="AllTodo" id="toggleSubMenu">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>View To-Do List</p>
                                     </a>
@@ -186,6 +185,7 @@
                                         </li>
                                     </ul>
                                 </li>
+
 
 
                             </ul>
@@ -287,6 +287,18 @@
 
         // When the window loads, assign a null function to the onload event to effectively do nothing
         window.onload = function () { null };
+    </script>
+
+    <script>
+        document.getElementById('toggleSubMenu').addEventListener('click', function (event) {
+            event.preventDefault();  // Prevent default anchor behavior
+            var subMenu = document.getElementById('subMenu');
+            if (subMenu.style.display === 'none') {
+                subMenu.style.display = 'block';  // Show the sub-menu
+            } else {
+                subMenu.style.display = 'none';  // Hide the sub-menu
+            }
+        });
     </script>
 
 

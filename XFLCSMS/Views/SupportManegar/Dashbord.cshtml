@@ -70,11 +70,11 @@
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
                 </li>
-                <li class="nav-item">
+@*                 <li class="nav-item">
                     <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
                         <i class="fas fa-th-large"></i>
                     </a>
-                </li>
+                </li> *@
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -165,7 +165,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" id="toggleSubMenu">
+                                    <a class="nav-link" asp-action="AllTodo" id="toggleSubMenu">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>View To-Do List</p>
                                     </a>
@@ -250,7 +250,7 @@
                                 <div class="inner">
                                     <h3>@Model.TotalQueue</h3>
 
-                                    <p>In Queue</p>
+                                    <p>Unassigned Tickets</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-ios-list"></i>

@@ -41,7 +41,7 @@ namespace XFLCSMS.Controllers
                 // Total Ticket
                 int TotalInTicket = _context.Issues.Count(i => i.UserId == UserID && (i.UserId == UserID));
                 int TotalInclosed = _context.Issues.Count(i => i.IStatus == "Close" && (i.UserId == UserID));
-                int TotalInQueue = TotalInTicket - TotalInclosed;
+                int TotalInQueue = _context.Issues.Count(i => i.AssignOn == null && i.AssignBy == null);
                 //Today
                 int TodayTotal = _context.Issues.Count(i => (i.TDate.Date == DateTime.Now.Date) && (i.UserId == UserID));
                 int TodayClose = _context.Issues.Count(i => (i.TDate.Date == DateTime.Now.Date) && (i.IStatus == "Close") && (i.UserId == UserID));
@@ -1001,7 +1001,7 @@ namespace XFLCSMS.Controllers
             }
             catch
             {
-                HttpContext.Session.Remove("AdminData");
+                HttpContext.Session.Remove("MakerData");
                 return RedirectToAction("Login", "RegisterLogin");
             }
         }

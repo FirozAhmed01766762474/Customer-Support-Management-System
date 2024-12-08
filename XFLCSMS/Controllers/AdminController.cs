@@ -42,7 +42,7 @@ namespace XFLCSMS.Controllers
                 // Total Ticket
                 int TotalInTicket = _context.Issues.Count();
                 int TotalInclosed = _context.Issues.Count(i => i.IStatus == "Close");
-                int TotalInQueue = TotalInTicket - TotalInclosed;
+                int TotalInQueue = _context.Issues.Count(i => i.AssignOn == null && i.AssignBy == null);
                 //Today
                 int TodayTotal = _context.Issues.Count(i => i.TDate.Date == DateTime.Now.Date);
                 int TodayClose = _context.Issues.Count(i => (i.TDate.Date == DateTime.Now.Date) && (i.IStatus == "Close"));
@@ -336,15 +336,15 @@ namespace XFLCSMS.Controllers
                     issue.AssignBy = makerView.AssgnBy;
                     issue.UpdatedOn = DateTime.Now;
                     issue.UpdatedBy = LogSesson.FullName.ToString();
-                    if (makerView.AssgnBy == null)
+                    if (makerView.AssgnBy != null)
                     {
-                        issue.AssignOn = null;
-                        issue.AssignBy = null;
+                        issue.AssignOn = DateTime.Now;
+
                     }
-                    if (issue.AssignBy != null && LogSesson.UType == true)
+                    if (makerView.ApproveOn != null)
                     {
-                        issue.ApproveOn = DateTime.Now;
-                        issue.ApproveBy = LogSesson.FullName;
+                        issue.ApproveOn = makerView.ApproveOn;
+                        issue.ApproveBy = makerView.ApproveBy;
                     }
                     else
                     {
@@ -601,8 +601,6 @@ namespace XFLCSMS.Controllers
             }
         }
 
-
-        [HttpDelete]
         public IActionResult DeleteTicket(int id)
         {
             try
@@ -615,9 +613,9 @@ namespace XFLCSMS.Controllers
                 {
                     _context.Issues.Remove(issueToDelete);
                     _context.SaveChanges();
-                    return Ok(); // Return a success status
+                    return RedirectToAction("AdminView", "Admin"); // Return a success status
                 }
-                return NotFound(); // Return a not found status if the issue doesn't exist
+                return RedirectToAction("AdminView", "Admin"); // Return a not found status if the issue doesn't exist
             }
             catch {
                 HttpContext.Session.Remove("AdminData");
@@ -769,6 +767,39 @@ namespace XFLCSMS.Controllers
             }
 
         }
+
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            try
+            {
+                // Retrieve the logged-in admin data from the session
+                var jsonStringFromSession = HttpContext.Session.GetString("AdminData");
+                User logSession = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = logSession;
+
+                // Find the user to delete
+                var user = await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
+
+                if (user == null)
+                {
+                    return RedirectToAction("UserList"); // If user not found, return NotFound result
+                }
+
+                // Remove the user from the context (database)
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync(); // Commit the changes to the database
+
+                // Optionally, you can redirect to a list of users or back to the user list page
+                return RedirectToAction("UserList"); // Or the appropriate action name where the list of users is shown
+            }
+            catch
+            {
+                // If an error occurs, remove the admin data from the session and redirect to login
+                HttpContext.Session.Remove("AdminData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+        }
+
         public async Task<IActionResult> ViewBrocarageHouse(int id)
         {
             try
@@ -871,7 +902,7 @@ namespace XFLCSMS.Controllers
 
         }
 
-        [HttpDelete]
+     
         public IActionResult DeleteBrocarage(int id)
         {
             try
@@ -883,9 +914,9 @@ namespace XFLCSMS.Controllers
                 {
                     _context.Brokerages.Remove(issueToDelete);
                     _context.SaveChanges();
-                    return Ok();
+                    return RedirectToAction("BrocarageHouseList");
                 }
-                return NotFound();
+                return RedirectToAction("BrocarageHouseList");
             }
             catch {
                 HttpContext.Session.Remove("AdminData");

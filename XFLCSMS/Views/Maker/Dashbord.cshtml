@@ -103,7 +103,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="profileDropdown">
                                     <a class="dropdown-item" asp-action="Profile" asp-route-id="@ViewBag.Profile.Id">My Profile</a>
-                                    <a class="dropdown-item" asp-action="">Change Password</a>
+                                    <a class="dropdown-item" asp-action="ChangePassword" asp-controller="Maker">Change Password</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" asp-action="Logout" asp-controller="Maker">Log Out</a>
                                 </div>
@@ -231,7 +231,7 @@
                                 <div class="inner">
                                     <h3>@Model.TotalQueue</h3>
 
-                                    <p>In Queue</p>
+                                    <p>Unassigned Tickets</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-ios-list"></i>

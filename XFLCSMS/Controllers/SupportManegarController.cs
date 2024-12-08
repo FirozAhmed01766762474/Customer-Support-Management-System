@@ -34,7 +34,7 @@ namespace XFLCSMS.Controllers
                 // Total Ticket
                 int TotalInTicket = _context.Issues.Count();
                 int TotalInclosed = _context.Issues.Count(i => i.IStatus == "Close");
-                int TotalInQueue = TotalInTicket - TotalInclosed;
+                int TotalInQueue = _context.Issues.Count(i => i.AssignOn == null && i.AssignBy == null);
                 //Today
                 int TodayTotal = _context.Issues.Count(i => i.TDate.Date == DateTime.Now.Date);
                 int TodayClose = _context.Issues.Count(i => (i.TDate.Date == DateTime.Now.Date) && (i.IStatus == "Close"));
@@ -481,15 +481,15 @@ namespace XFLCSMS.Controllers
                     issue.AssignBy = makerView.AssgnBy;
                     issue.UpdatedOn = DateTime.Now;
                     issue.UpdatedBy = LogSesson.FullName;
-                    if (makerView.AssgnBy == null)
+                    if (makerView.AssgnBy != null)
                     {
-                        issue.AssignOn = null;
-                        issue.AssignBy = null;
+                        issue.AssignOn = DateTime.Now;
+
                     }
-                    if (issue.AssignBy != null && LogSesson.UType == true)
+                    if (makerView.ApproveOn != null)
                     {
-                        issue.ApproveOn = DateTime.Now;
-                        issue.ApproveBy = LogSesson.FullName;
+                        issue.ApproveOn = makerView.ApproveOn;
+                        issue.ApproveBy = makerView.ApproveBy;
                     }
                     else
                     {
@@ -625,10 +625,9 @@ namespace XFLCSMS.Controllers
                     SupportSubCatagoryId = issueViewModel.issueFrom.SupportSubCatagoryID,
                     AffectedSectionId = issueViewModel.issueFrom.AffectedSectionId,
                     ITitle = issueViewModel.issueFrom.ITitle,
-                    //AffectedSectionId= null,
-                    //SupportCatagoryId= null,
-                    //SupportSubCatagoryId=null,
-                    //SupportTypeId = null,
+                    IStatus = "Open",
+                    AssignOn = null,
+                    AssignBy = null,
 
                     BrokerageId = CreateBrocarageID(issueViewModel.issueFrom.BrocarageHouseName)
                 };
@@ -1115,7 +1114,46 @@ namespace XFLCSMS.Controllers
 
         }
 
+        public async Task<IActionResult> Profile(int id)
+        {
 
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SMData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+                var user = await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound(); // Or handle the case where the user is not found
+                }
+
+                var userView = new UserView
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    PhonNumber = user.PhonNumber,
+                    Designation = user.Department,
+                    BrokerageHouseName = GetBrocarageHouseName(user.BrokerageHouseName),
+                    Branch = GetBranchName(user.Branch),
+                    EmployeeId = user.EmployeeId,
+                    UserName = user.UserName,
+                    UCatagory = user.UCatagory,
+                    UType = user.UType,
+                    UStatus = user.UStatus
+                };
+
+
+                return View(userView);
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SMData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
+        }
 
         [HttpPost]
         public IActionResult DeleteAttachment(int attachmentId)
@@ -1406,7 +1444,18 @@ namespace XFLCSMS.Controllers
             return null;
 
         }
-
+        private string GetBranchName(int id)
+        {
+            var Brocarage = _context.Branchhs.ToList();
+            foreach (var item in Brocarage)
+            {
+                if (item.BrokerageId == id)
+                {
+                    return item.BranchName;
+                }
+            }
+            return null;
+        }
         private string CreateHouseName(int id)
         {
             var Brocaragessss = _context.Brokerages.ToList();

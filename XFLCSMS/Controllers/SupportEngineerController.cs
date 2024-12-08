@@ -34,11 +34,12 @@ namespace XFLCSMS.Controllers
                 // Total Ticket
                 int TotalInTicket = _context.Issues.Count();
                 int TotalInclosed = _context.Issues.Count(i => i.IStatus == "Close");
-                int TotalInQueue = TotalInTicket - TotalInclosed;
+                //int TotalInQueue = TotalInTicket - TotalInclosed;
+                int TotalInQueue = _context.Issues.Count(i => i.AssignOn == null && i.AssignBy == null);
                 //Today
                 int TodayTotal = _context.Issues.Count(i => i.TDate.Date == DateTime.Now.Date);
                 int TodayClose = _context.Issues.Count(i => (i.TDate.Date == DateTime.Now.Date) && (i.IStatus == "Close"));
-                int TodayQueue = TodayTotal - TodayClose;
+                int TodayQueue = _context.Issues.Count(i => i.AssignOn == null && i.AssignBy == null);
                 //Week
                 DateTime lastWeekStartDate = DateTime.Now.Date.AddDays(-7);
                 int LastWeekTotal = _context.Issues.Count(i => i.TDate.Date >= lastWeekStartDate && i.TDate.Date <= DateTime.Now.Date);
@@ -554,15 +555,15 @@ namespace XFLCSMS.Controllers
                     issue.AssignBy = makerView.AssgnBy;
                     issue.UpdatedOn = DateTime.Now;
                     issue.UpdatedBy = LogSesson.FullName.ToString();
-                    if (makerView.AssgnBy == null)
+                    if (makerView.AssgnBy != null)
                     {
-                        issue.AssignOn = null;
-                        issue.AssignBy = null;
+                        issue.AssignOn = DateTime.Now;
+                       
                     }
-                    if (issue.AssignBy != null)
+                    if(makerView.ApproveOn!=null)
                     {
-                        issue.ApproveOn = DateTime.Now;
-                        issue.ApproveBy = LogSesson.FullName;
+                        issue.ApproveOn = makerView.ApproveOn;
+                        issue.ApproveBy = makerView.ApproveBy;
                     }
                     else
                     {
@@ -677,60 +678,158 @@ namespace XFLCSMS.Controllers
             }
         }
 
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> IssueRaiseFrom(IssueViewModel issueViewModel, List<IFormFile> files)
+        //{
+        //    try
+        //    {
+        //        var jsonStringFromSession = HttpContext.Session.GetString("SEData");
+        //        if (string.IsNullOrEmpty(jsonStringFromSession))
+        //        {
+        //            return RedirectToAction("Login", "RegisterLogin");
+        //        }
+        //        User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+
+        //        if (issueViewModel?.issueFrom == null)
+        //        {
+        //            ModelState.AddModelError("", "Invalid issue data.");
+        //            return View(issueViewModel);
+        //        }
+
+        //        if (_webHostEnvironment == null || _context == null)
+        //        {
+        //            throw new InvalidOperationException("Dependencies are not initialized.");
+        //        }
+
+        //        var issue = new IssueTable
+        //        {
+        //            TDate = issueViewModel.issueFrom.dateTime,
+        //            TNumber = issueViewModel.issueFrom.TicketId,
+        //            Priority = issueViewModel.issueFrom.Priority,
+        //            Details = issueViewModel.issueFrom.IssueDetails?.ToString(),
+        //            Comments = issueViewModel.issueFrom.Commands?.ToString(),
+        //            UserId = issueViewModel.issueFrom.UserId,
+        //            SupportCatagoryId = issueViewModel.issueFrom.SupportCatagoryId,
+        //            SupportTypeId = issueViewModel.issueFrom.SupportTypeId,
+        //            SupportSubCatagoryId = issueViewModel.issueFrom.SupportSubCatagoryID,
+        //            AffectedSectionId = issueViewModel.issueFrom.AffectedSectionId,
+        //            ITitle = issueViewModel.issueFrom.ITitle,
+        //            IStatus = "Open",
+        //            BrokerageId = CreateBrocarageID(issueViewModel.issueFrom.BrocarageHouseName)
+        //        };
+
+        //        _context.Issues.Add(issue);
+        //        await _context.SaveChangesAsync();
+
+        //        var uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
+        //        Directory.CreateDirectory(uploadFolder);
+
+        //        if (files != null && files.Any())
+        //        {
+        //            foreach (var file in files)
+        //            {
+        //                var fileName = Path.GetFileName(file.FileName);
+        //                var filePath = Path.Combine(uploadFolder, fileName);
+
+        //                using (var stream = new FileStream(filePath, FileMode.Create))
+        //                {
+        //                    await file.CopyToAsync(stream);
+        //                }
+
+        //                var attachment = new Attachment
+        //                {
+        //                    FileName = fileName,
+        //                    AttachmentLoc = filePath,
+        //                    IssueId = issue.IssueId
+        //                };
+
+        //                _context.Attachments.Add(attachment);
+        //            }
+        //        }
+
+        //        await _context.SaveChangesAsync();
+
+        //        return RedirectToAction("AllTicketList");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log exception (consider using ILogger for better logging)
+        //        return RedirectToAction("Login", "RegisterLogin");
+        //    }
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> IssueRaiseFrom(IssueViewModel issueViewModel, List<IFormFile> files)
+        public async Task<IActionResult>         
+        IssueRaiseFrom(IssueViewModel issueViewModel, List<IFormFile> files)
         {
             try
             {
                 var jsonStringFromSession = HttpContext.Session.GetString("SEData");
+                if (string.IsNullOrEmpty(jsonStringFromSession))
+                {
+                    return RedirectToAction("Login", "RegisterLogin");
+                }
                 User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+
+                if (issueViewModel?.issueFrom == null)
+                {
+                    ModelState.AddModelError("", "Invalid issue data.");
+                    return View(issueViewModel);
+                }
+
+                if (_webHostEnvironment == null || _context == null)
+                {
+                    throw new InvalidOperationException("Dependencies are not initialized.");
+                }
+
                 var issue = new IssueTable
                 {
                     TDate = issueViewModel.issueFrom.dateTime,
                     TNumber = issueViewModel.issueFrom.TicketId,
-
                     Priority = issueViewModel.issueFrom.Priority,
-                    Details = issueViewModel.issueFrom.IssueDetails.ToString(),
-                    Comments = issueViewModel.issueFrom.Commands.ToString(),
+                    Details = issueViewModel.issueFrom.IssueDetails?.ToString(),
+                    Comments = issueViewModel.issueFrom.Commands?.ToString(),
                     UserId = issueViewModel.issueFrom.UserId,
                     SupportCatagoryId = issueViewModel.issueFrom.SupportCatagoryId,
                     SupportTypeId = issueViewModel.issueFrom.SupportTypeId,
                     SupportSubCatagoryId = issueViewModel.issueFrom.SupportSubCatagoryID,
                     AffectedSectionId = issueViewModel.issueFrom.AffectedSectionId,
                     ITitle = issueViewModel.issueFrom.ITitle,
-                    //AffectedSectionId= null,
-                    //SupportCatagoryId= null,
-                    //SupportSubCatagoryId=null,
-                    //SupportTypeId = null,
-
-                    BrokerageId = CreateBrocarageID(issueViewModel.issueFrom.BrocarageHouseName)
+                    IStatus = "Open",
+                    BrokerageId = CreateBrocarageID(issueViewModel.issueFrom.BrocarageHouseName),
+                    AssignOn=null,
+                    AssignBy=null
                 };
 
                 _context.Issues.Add(issue);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                var uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Uplods");
-                Directory.CreateDirectory(uploadFolder); // Create the directory once outside the loop
+                var uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
+                Directory.CreateDirectory(uploadFolder);
 
-                foreach (var file in files)
+                if (files != null && files.Any())
                 {
-                    var fileName = file.FileName; // Ensure unique file names
-                    var filePath = Path.Combine(uploadFolder, fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    foreach (var file in files)
                     {
-                        await file.CopyToAsync(stream);
+                        var fileName = Path.GetFileName(file.FileName);
+                        var filePath = Path.Combine(uploadFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var attachment = new Attachment
+                        {
+                            FileName = fileName,
+                            AttachmentLoc = filePath,
+                            IssueId = issue.IssueId
+                        };
+
+                        _context.Attachments.Add(attachment);
                     }
-
-                    var attachment = new Attachment
-                    {
-                        FileName = file.FileName,
-                        AttachmentLoc = filePath,
-                        IssueId = issue.IssueId
-                    };
-
-                    _context.Attachments.Add(attachment);
                 }
 
                 await _context.SaveChangesAsync();
@@ -739,7 +838,7 @@ namespace XFLCSMS.Controllers
             }
             catch (Exception ex)
             {
-                HttpContext.Session.Remove("SEData");
+                // Log exception (consider using ILogger for better logging)
                 return RedirectToAction("Login", "RegisterLogin");
             }
         }
@@ -748,6 +847,46 @@ namespace XFLCSMS.Controllers
         {
             HttpContext.Session.Remove("SEData");
             return RedirectToAction("Login", "RegisterLogin");
+        }
+        public async Task<IActionResult> Profile(int id)
+        {
+
+            try
+            {
+                var jsonStringFromSession = HttpContext.Session.GetString("SEData");
+                User LogSesson = JsonConvert.DeserializeObject<User>(jsonStringFromSession);
+                ViewBag.Profile = LogSesson;
+                var user = await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound(); // Or handle the case where the user is not found
+                }
+
+                var userView = new UserView
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    PhonNumber = user.PhonNumber,
+                    Designation = user.Department,
+                    BrokerageHouseName = GetBrocarageHouseName(user.BrokerageHouseName),
+                    Branch = GetBranchName(user.Branch),
+                    EmployeeId = user.EmployeeId,
+                    UserName = user.UserName,
+                    UCatagory = user.UCatagory,
+                    UType = user.UType,
+                    UStatus = user.UStatus
+                };
+
+
+                return View(userView);
+            }
+            catch
+            {
+                HttpContext.Session.Remove("SEData");
+                return RedirectToAction("Login", "RegisterLogin");
+            }
         }
         private string UserName(int id)
         {
@@ -1434,7 +1573,18 @@ namespace XFLCSMS.Controllers
             }
         }
 
-
+        private string GetBranchName(int id)
+        {
+            var Brocarage = _context.Branchhs.ToList();
+            foreach (var item in Brocarage)
+            {
+                if (item.BrokerageId == id)
+                {
+                    return item.BranchName;
+                }
+            }
+            return null;
+        }
 
         private string GetBrocarageHouseName(int? id)
         {

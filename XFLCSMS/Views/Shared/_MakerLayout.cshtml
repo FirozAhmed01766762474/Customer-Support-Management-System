@@ -90,11 +90,11 @@
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
                 </li>
-                <li class="nav-item">
+@*                 <li class="nav-item">
                     <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
                         <i class="fas fa-th-large"></i>
                     </a>
-                </li>
+                </li> *@
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -120,7 +120,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="profileDropdown">
                                     <a class="dropdown-item" asp-action="Profile" asp-route-id="@ViewBag.Profile.Id">My Profile</a>
-                                    <a class="dropdown-item" asp-action="">Change Password</a>
+                                    <a class="dropdown-item" asp-action="ChangePassword" asp-controller="Maker">Change Password</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" asp-action="Logout" asp-controller="Maker">Log Out</a>
                                 </div>
